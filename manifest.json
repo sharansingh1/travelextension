@@ -1,0 +1,11 @@
+{
+    "name": "Travel Itinerary Maker",
+    "version": "1.0.0",
+    "description": "This is an extension to create travel itinerary based on desired cities",
+    "manifest_version": 3,
+    "author": "Sharan Singh",
+    "action": {
+        "default_popup": "index.html",
+        "default_title": "Travel Itinerary Maker"
+    }
+}
