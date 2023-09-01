@@ -1,0 +1,17 @@
+body {
+    width: 300px;
+    background-color: gold;
+    padding: 15px;
+  }
+  
+  input {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  button {
+    width: 100%;
+    background-color: #007acc;
+    color: white;
+  }
+  
