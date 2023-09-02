@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    
     async function searchCity(city) {
         const apiKey = '78314c7265msha48978f37f3a697p1b00a2jsn1a4165569374';
         const searchUrl = `https://opentripmap-places-v1.p.rapidapi.com/en/places/geoname?name=${city}`;
@@ -28,6 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log('longitude', longitude);
             // Call a function to fetch attractions using the latitude and longitude
             fetchAttractions(latitude, longitude);
+            fetchRestaurantsByCity(city);
         } catch (error) {
             console.error('Error:', error);
         }
@@ -35,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function fetchAttractions(lat, lon) {
         const apiKey = '78314c7265msha48978f37f3a697p1b00a2jsn1a4165569374';
-        const attractionsUrl = `https://opentripmap-places-v1.p.rapidapi.com/en/places/radius?radius=500&lon=${lon}&lat=${lat}`;
+        const attractionsUrl = `https://opentripmap-places-v1.p.rapidapi.com/en/places/radius?radius=500000&lon=${lon}&lat=${lat}`;
         const options = {
             method: 'GET',
             headers: {
@@ -64,20 +66,129 @@ document.addEventListener('DOMContentLoaded', function () {
         resultsDiv.innerHTML = '';
         
         if (data && data.features && data.features.length > 0) {
-            const attractionsList = document.createElement('ul');
-    
-            data.features.forEach(feature => {
-                const attractionName = feature.properties.name;
-                const attractionElement = document.createElement('li');
-                attractionElement.textContent = attractionName;
-                attractionsList.appendChild(attractionElement);
+            // Extract attraction names from the API data
+            const attractionNames = data.features.map(feature => feature.properties.name);
+        
+            // Define restaurant names (replace these with actual restaurant names)
+            const restaurantNames = [
+                'Restaurant 1',
+                'Restaurant 2',
+                'Restaurant 3'
+            ];
+        
+            // Shuffle the list of attractions (randomize order)
+            shuffleArray(attractionNames);
+        
+            // Create a schedule array
+            const schedule = [];
+        
+            // Initialize the hour (starting from 10 AM)
+            let hour = 10;
+            let realTime = 0;
+        
+            // Add breakfast, lunch, and dinner
+            schedule.push({ time: `${hour} AM`, activity: 'Breakfast' });
+            hour++;
+           
+            
+            // Add attractions
+            for (let i = 0; i < 12; i++) {
+                const attraction = attractionNames[i];
+                if (attraction) {
+                    if (hour === 12) {
+                        schedule.push({ time: `${hour} PM`, activity: attraction });
+                    } else if (hour > 12) {
+                        let realTime = hour -12;
+                        if(realTime == 2)
+                        {
+                            schedule.push({ time: `${realTime} PM`, activity: 'Lunch' });
+                        }
+                        else if(realTime == 6)
+                        {
+                            schedule.push({ time: `${realTime} PM`, activity: 'Dinner' });
+                        }
+                        else{
+                            schedule.push({ time: `${realTime} PM`, activity: attraction });
+                        }
+                        
+                    } else {
+                        schedule.push({ time: `${hour} AM`, activity: attraction });
+                    }
+                    hour++;
+                }
+            }
+        
+            // Add "Rest" at the end
+            schedule.push({ time: `${hour-12} PM`, activity: 'Rest' });
+        
+            // Display the schedule
+            const scheduleList = document.createElement('ul');
+            schedule.forEach(item => {
+                const scheduleItem = document.createElement('li');
+                scheduleItem.textContent = `${item.time}: ${item.activity}${item.location ? ' - ' + item.location : ''}`;
+                scheduleList.appendChild(scheduleItem);
             });
-    
-            resultsDiv.appendChild(attractionsList);
+            resultsDiv.appendChild(scheduleList);
         } else {
             const noResultsMessage = document.createElement('p');
             noResultsMessage.textContent = 'No attractions found near this city.';
             resultsDiv.appendChild(noResultsMessage);
+        }
+    }
+    // Function to shuffle an array in place
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    async function fetchRestaurantsByCity(city) {
+        const apiKey = '78314c7265msha48978f37f3a697p1b00a2jsn1a4165569374'; // Replace with your actual API key
+        const searchUrl = `https://opentripmap-places-v1.p.rapidapi.com/en/places/radius?radius=1000&lon=0&lat=0&kinds=restaurant&name=${city}`;        
+        
+        const options = {
+            method: 'GET',
+            headers: {
+                'X-RapidAPI-Key': apiKey,
+                'X-RapidAPI-Host': 'opentripmap-places-v1.p.rapidapi.com'
+            }
+        };
+
+        try {
+            const response = await fetch(searchUrl, options);
+            if (response.ok) {
+                const data = await response.json();
+                console.log('API Response Data:', data);
+                displayRestaurants(data.features); // Call the display function
+            } else {
+                console.error('Error:', response.status, response.statusText);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    function displayRestaurants(restaurants) {
+        console.log('Displaying Restaurants:', restaurants);
+        // Clear previous restaurant list
+        restaurantList.innerHTML = '';
+
+        if (restaurants && restaurants.length > 0) {
+            const restaurantListItems = document.createDocumentFragment();
+
+            restaurants.forEach(restaurant => {
+                const restaurantName = restaurant.properties.name;
+                const restaurantItem = document.createElement('li');
+                restaurantItem.textContent = restaurantName;
+                restaurantListItems.appendChild(restaurantItem);
+            });
+
+            restaurantList.appendChild(restaurantListItems);
+        } else {
+            const noRestaurantsMessage = document.createElement('p');
+            noRestaurantsMessage.textContent = 'No restaurants found in this city.';
+            restaurantList.appendChild(noRestaurantsMessage);
         }
     }
     
