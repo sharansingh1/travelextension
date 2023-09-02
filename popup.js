@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     async function fetchAttractions(lat, lon) {
-        const apiKey = '78314c7265msha48978f37f3a697p1b00a2jsn1a4165569374';
+        const apiKey = '';
         const attractionsUrl = `https://opentripmap-places-v1.p.rapidapi.com/en/places/radius?radius=500000&lon=${lon}&lat=${lat}`;
         const options = {
             method: 'GET',
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     async function fetchRestaurantsByCity(city) {
-        const apiKey = '78314c7265msha48978f37f3a697p1b00a2jsn1a4165569374'; // Replace with your actual API key
+        const apiKey = ''; // Replace with your actual API key
         const searchUrl = `https://opentripmap-places-v1.p.rapidapi.com/en/places/radius?radius=1000&lon=0&lat=0&kinds=restaurant&name=${city}`;        
         
         const options = {
