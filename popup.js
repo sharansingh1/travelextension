@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     
     async function searchCity(city) {
-        const apiKey = '';
+        const apiKey = '78314c7265msha48978f37f3a697p1b00a2jsn1a4165569374';
         const searchUrl = `https://opentripmap-places-v1.p.rapidapi.com/en/places/geoname?name=${city}`;
         const options = {
             method: 'GET',
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log('longitude', longitude);
             // Call a function to fetch attractions using the latitude and longitude
             fetchAttractions(latitude, longitude);
-            fetchRestaurantsByCity(city);
+            
         } catch (error) {
             console.error('Error:', error);
         }
@@ -143,53 +143,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    async function fetchRestaurantsByCity(city) {
-        const apiKey = '78314c7265msha48978f37f3a697p1b00a2jsn1a4165569374'; // Replace with your actual API key
-        const searchUrl = `https://opentripmap-places-v1.p.rapidapi.com/en/places/radius?radius=1000&lon=0&lat=0&kinds=restaurant&name=${city}`;        
-        
-        const options = {
-            method: 'GET',
-            headers: {
-                'X-RapidAPI-Key': apiKey,
-                'X-RapidAPI-Host': 'opentripmap-places-v1.p.rapidapi.com'
-            }
-        };
-
-        try {
-            const response = await fetch(searchUrl, options);
-            if (response.ok) {
-                const data = await response.json();
-                console.log('API Response Data:', data);
-                displayRestaurants(data.features); // Call the display function
-            } else {
-                console.error('Error:', response.status, response.statusText);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }
-
-    function displayRestaurants(restaurants) {
-        console.log('Displaying Restaurants:', restaurants);
-        // Clear previous restaurant list
-        restaurantList.innerHTML = '';
-
-        if (restaurants && restaurants.length > 0) {
-            const restaurantListItems = document.createDocumentFragment();
-
-            restaurants.forEach(restaurant => {
-                const restaurantName = restaurant.properties.name;
-                const restaurantItem = document.createElement('li');
-                restaurantItem.textContent = restaurantName;
-                restaurantListItems.appendChild(restaurantItem);
-            });
-
-            restaurantList.appendChild(restaurantListItems);
-        } else {
-            const noRestaurantsMessage = document.createElement('p');
-            noRestaurantsMessage.textContent = 'No restaurants found in this city.';
-            restaurantList.appendChild(noRestaurantsMessage);
-        }
-    }
+    
     
 });
